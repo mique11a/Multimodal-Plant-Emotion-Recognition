@@ -1,50 +1,224 @@
-本项目基于多模态融合技术与自主研发的 **双相激活函数 (PBA)**，旨在通过植物电位 (Electrical Potential) 与复阻抗 (Impedance) 信号，识别植物的生理情绪状态（如：正常、触碰、光照应激、环境胁迫）。
+# Plant Condition Model
 
-## 📁 目录结构说明
+基于植物电位时序和单点阻抗的多模态状态识别项目。当前仓库已经整理为可直接训练、测试和部署的交付版本，正式保留的最终类别为 `light / normal / touch`；早期 `stress` 原型、重复数据、旧权重、生成脚本和本地环境均已归档到 `intermedia_res/`，并通过 `.gitignore` 排除提交。
 
-* `signal_processor.py`: 信号预处理模块（陷波滤波、低通滤波）。
-* `PlantMultimodalDataset.py`: 多模态数据集读取与异步信号对齐逻辑。
-* `PlantTimeDomainEncoder.py`: 基于 1D CNN + Bi-GRU 的电压时序特征提取器。
-* `PlantBiphasicActivation.py`: **[核心专利复现]** 双相生理激活层，提供快慢相解耦。
-* `PlantFusionNet.py`: 多模态融合主网络。
-* `main_train.py`: 自动化训练与生理指标监控总控脚本。
+## 项目完成情况
 
-## 🛠️ 环境配置
+- 最终可部署模型权重: `model/plant_fusion_best.pt`
+- 训练数据:
+  - `dataset_real_condition/`: 原始合并 CSV
+  - `dataset_real_condition_filtered_v2/`: 过滤后的训练数据
+- 测试数据:
+  - `analysis_outputs/local_smoke/`: 3 个本地 smoke case
+  - `dataset_raw_test_fullfix_filtered/`: 长序列压测集
+- 测试结论与图表: `analysis_outputs/`
 
-本项目推荐使用 `uv` 或 `pip` 进行环境管理，要求 **Python 3.10+**。
+## 推理原理
 
-### 1. 快速安装依赖
+模型输入来自植物的电压时序信号与阻抗信号。电压分支负责提取瞬时脉冲和长时漂移特征，阻抗分支负责表征长时刺激带来的生理属性变化。两路特征在融合层中完成门控聚合，再经双相激活层输出类别概率，并给出该窗口更偏向快相响应还是慢相响应的生理指示。
+
+当前实现对应的主干结构是:
+
+- 电位分支: 多尺度 1D CNN + Bi-GRU
+- 阻抗分支: MLP 编码
+- 融合层: 阻抗引导的门控融合
+- 输出层: Biphasic Activation，输出类别概率与 `fast_response / slow_response`
+
+## 架构图
+
+![整体架构](./nn.png)
+
+## 压测结果图
+
+![压测总览](./analysis_outputs/pressure_dashboard.png)
+
+![窗口级混淆矩阵](./analysis_outputs/pressure_confusion_heatmap.png)
+
+压测摘要来自 `analysis_outputs/pressure_summary.json`:
+
+- 文件级准确率: `Normal 100% / Touch 100% / Light 100%`
+- 窗口级纯度: `Normal 100.00% / Touch 83.23% / Light 98.99%`
+- 主要混淆:
+  - `Touch -> Normal`: `16.77%`
+  - `Light -> Touch`: `1.01%`
+
+## 目录说明
+
+```text
+.
+├── PlantTimeDomainEncoder.py
+├── PlantFusionNet.py
+├── PlantBiphasicActivation.py
+├── PlantMultimodalDataset.py
+├── inference_utils.py
+├── signal_processor.py
+├── main_train.py
+├── test.py
+├── test_res.py
+├── deploy_api.py
+├── model/
+│   └── plant_fusion_best.pt
+├── dataset_real_condition/
+├── dataset_real_condition_filtered_v2/
+├── dataset_raw_test_fullfix_filtered/
+├── analysis_outputs/
+└── intermedia_res/  # 已归档、默认不提交
+```
+
+## 数据格式
+
+训练和推理默认读取按类别分目录的 CSV:
+
+```text
+dataset_root/
+├── light/
+├── normal/
+└── touch/
+```
+
+CSV 至少需要包含:
+
+- 电压列: `电压` 或 `电压(V)`
+- 阻抗列: `阻抗` 或 `幅值`
+- 可选时间列: `时间(s)`，用于估算采样率和滤波参数
+
+窗口配置:
+
+- `window_size = 250`
+- `train_stride = 50`
+- `stream_stride = 50`
+
+## 环境安装
 
 ```bash
-git clone https://github.com/mique11a/Multimodal-Plant-Emotion-Recognition.git
-cd plant_condition_model
-# 使用 uv 快速同步环境
-uv pip install -r requirements.txt --index-url https://download.pytorch.org/whl/cu121
-# 或者使用标准 pip
+python -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. 数据准备
+## 如何训练
 
-请确保你的数据存放在 `dataset_filtered/` 目录下，并按以下结构组织：
+### 1. 原始数据预处理
 
-```text
-dataset_filtered/
-├── normal/   # 存放正常状态的 CSV
-├── touch/    # 存放触摸刺激的 CSV
-└── light/    # 存放光照变化的 CSV
-
-```
-
-## 🚀 运行方法
-
-执行总控脚本即可开始训练。脚本会自动检测 CUDA 加速，并实时打印各分类的 **$\alpha$ (快相占比)** 生理指标。
+从原始采集数据重新清洗一版训练集，先运行:
 
 ```bash
-python main_train.py
+python signal_processor.py \
+  --input dataset_real_condition \
+  --output dataset_real_condition_filtered \
+  --summary-json analysis_outputs/preprocessing_summary.json
 ```
 
-## 📊 模块逻辑说明
+该步骤会:
 
-* **输入对齐**：电压信号采样率为 250Hz，阻抗为单点采样。Dataset 模块通过均值填充和滑动窗口实现两者的特征对齐。
-* **生理指标解读**：训练过程中输出的 $\alpha$ 值代表该状态是由“快速电信号（如动作电位）”还是“缓慢代谢（如变异电位）”引起的，数值越接近 1 代表响应越敏捷。
+- 对电压信号做低通滤波
+- 在可用时自动判断是否需要工频陷波
+- 对每个文件内的电压做标准化
+- 生成预处理参数摘要 JSON
+
+### 2. 训练模型
+
+```bash
+python main_train.py \
+  --data-root dataset_real_condition_filtered \
+  --output model/plant_fusion_best.pt
+```
+
+常用可选参数:
+
+- `--epochs 20`
+- `--batch-size 32`
+- `--lr 3e-4`
+- `--window-size 250`
+- `--stride 50`
+
+训练会同时保存:
+
+- 最佳模型: `model/plant_fusion_best.pt`
+- 最后一轮模型: `model/plant_fusion_best_last.pt`
+
+## 如何测试
+
+### 1. 单文件推理
+
+默认 smoke case:
+
+```bash
+python test.py --csv analysis_outputs/local_smoke/raw_test_touch_000.csv 
+```
+
+输出内容包括:
+
+- 文件级主导类别
+- 滑窗数量
+- 投票分布
+- 平均类别概率
+- 代表性窗口的快慢相指标
+
+如果需要完整窗口明细:
+
+```bash
+python test.py \
+  --csv analysis_outputs/local_smoke/raw_test_touch_000.csv \
+  --include-windows
+```
+
+### 2. 批量压测
+
+本地模型模式:
+
+```bash
+INFERENCE_MODE=local \
+EXPECTED_TYPE=TOUCH \
+TARGET_DIR=dataset_raw_test_fullfix_filtered/touch \
+python test_res.py
+```
+
+如果你已经起了 HTTP 服务，也可以切换到接口模式:
+
+```bash
+INFERENCE_MODE=cloud \
+EXPECTED_TYPE=TOUCH \
+TARGET_DIR=dataset_raw_test_fullfix_filtered/touch \
+API_URL=http://127.0.0.1:8000/predict \
+HEALTH_URL=http://127.0.0.1:8000/health \
+python test_res.py
+```
+
+## 如何部署
+
+### 1. 启动服务
+
+```bash
+python deploy_api.py --host 0.0.0.0 --port 8000
+```
+
+服务提供两个接口:
+
+- `GET /health`
+- `POST /predict`
+
+### 2. 健康检查
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+### 3. 推理请求格式
+
+`POST /predict` 请求体:
+
+```json
+{
+  "voltage": [250 个电压采样点],
+  "impedance": 7123.4
+}
+```
+
+返回字段包括:
+
+- `label`
+- `confidence`
+- `probabilities`
+- `fast_response`
+- `slow_response`

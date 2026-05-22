@@ -6,3 +6,4 @@ torchvision
 torchaudio
 tqdm>=4.65.0
 matplotlib>=3.7.1
+requests>=2.31.0

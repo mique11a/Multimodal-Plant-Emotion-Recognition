@@ -1,0 +1,61 @@
+[
+  {
+    "class": "LIGHT",
+    "files": 50,
+    "file_accuracy": 1.0,
+    "total_window_votes": 13331,
+    "expected_window_votes": 13197,
+    "expected_window_share": 0.9899482409421648,
+    "off_target_window_votes": 134,
+    "avg_expected_share_per_file": 0.9899495782066997,
+    "min_expected_share_per_file": 0.9736842105263158,
+    "max_expected_share_per_file": 1.0,
+    "avg_margin_per_file": 0.9798991564133993,
+    "min_margin_per_file": 0.9473684210526315,
+    "main_confuser": "TOUCH",
+    "main_confuser_votes": 134,
+    "vote_distribution": {
+      "LIGHT": 13197,
+      "TOUCH": 134
+    }
+  },
+  {
+    "class": "NORMAL",
+    "files": 50,
+    "file_accuracy": 1.0,
+    "total_window_votes": 8407,
+    "expected_window_votes": 8407,
+    "expected_window_share": 1.0,
+    "off_target_window_votes": 0,
+    "avg_expected_share_per_file": 1.0,
+    "min_expected_share_per_file": 1.0,
+    "max_expected_share_per_file": 1.0,
+    "avg_margin_per_file": 1.0,
+    "min_margin_per_file": 1.0,
+    "main_confuser": "None",
+    "main_confuser_votes": 0,
+    "vote_distribution": {
+      "NORMAL": 8407
+    }
+  },
+  {
+    "class": "TOUCH",
+    "files": 50,
+    "file_accuracy": 1.0,
+    "total_window_votes": 2499,
+    "expected_window_votes": 2080,
+    "expected_window_share": 0.8323329331732693,
+    "off_target_window_votes": 419,
+    "avg_expected_share_per_file": 0.8323020408163265,
+    "min_expected_share_per_file": 0.62,
+    "max_expected_share_per_file": 1.0,
+    "avg_margin_per_file": 0.6646040816326532,
+    "min_margin_per_file": 0.24,
+    "main_confuser": "NORMAL",
+    "main_confuser_votes": 419,
+    "vote_distribution": {
+      "TOUCH": 2080,
+      "NORMAL": 419
+    }
+  }
+]

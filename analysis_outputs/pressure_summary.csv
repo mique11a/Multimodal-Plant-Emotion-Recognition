@@ -1,0 +1,4 @@
+class,files,file_accuracy,total_window_votes,expected_window_votes,expected_window_share,off_target_window_votes,avg_expected_share_per_file,min_expected_share_per_file,max_expected_share_per_file,avg_margin_per_file,min_margin_per_file,main_confuser,main_confuser_votes,vote_distribution
+LIGHT,50,1.0,13331,13197,0.9899482409421648,134,0.9899495782066997,0.9736842105263158,1.0,0.9798991564133993,0.9473684210526315,TOUCH,134,"{'LIGHT': 13197, 'TOUCH': 134}"
+NORMAL,50,1.0,8407,8407,1.0,0,1.0,1.0,1.0,1.0,1.0,None,0,{'NORMAL': 8407}
+TOUCH,50,1.0,2499,2080,0.8323329331732693,419,0.8323020408163265,0.62,1.0,0.6646040816326532,0.24,NORMAL,419,"{'TOUCH': 2080, 'NORMAL': 419}"

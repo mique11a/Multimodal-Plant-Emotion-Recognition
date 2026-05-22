@@ -1,0 +1,147 @@
+{
+  "__meta__": {
+    "input_root": "dataset_real_condition",
+    "output_root": "dataset_real_condition_filtered",
+    "processed_file_count": 4,
+    "skipped_file_count": 0,
+    "skipped_files": {}
+  },
+  "light/V_Imp_DtoL.csv": {
+    "input_file": "light/V_Imp_DtoL.csv",
+    "output_file": "light/V_Imp_DtoL.csv",
+    "voltage_column": "电压",
+    "sample_count": 13535,
+    "processor_fs": 250.0,
+    "window_size": 250,
+    "overlap": 125,
+    "hop_size": 125,
+    "analog_highpass_hz": 0.1,
+    "analog_lowpass_hz": 100.0,
+    "adaptive_notch_harmonics_hz": [
+      50.0,
+      100.0
+    ],
+    "signal_length": 13535,
+    "window_count": 108,
+    "short_signal": false,
+    "state_distribution": {
+      "inactive": 108
+    },
+    "avg_pole_radius": 0.9000000000000005,
+    "avg_ensemble_size": 6.0,
+    "avg_noise_coeff": 0.09999999999999999,
+    "dominant_wavelet": "db4",
+    "avg_corr": 0.6324527351266929,
+    "avg_gsnr": 5.878940205204072,
+    "avg_nrmse": 0.14175563856542409,
+    "avg_cost": 2.8772408406076955,
+    "avg_alpha": 1.0489100027296876,
+    "avg_r_opt": 0.6305047219392154,
+    "normalization_mean": -3.4980858940666816e-05,
+    "normalization_std": 0.001630634423291803
+  },
+  "normal/V_Imp_default1.csv": {
+    "input_file": "normal/V_Imp_default1.csv",
+    "output_file": "normal/V_Imp_default1.csv",
+    "voltage_column": "电压",
+    "sample_count": 13244,
+    "processor_fs": 250.0,
+    "window_size": 250,
+    "overlap": 125,
+    "hop_size": 125,
+    "analog_highpass_hz": 0.1,
+    "analog_lowpass_hz": 100.0,
+    "adaptive_notch_harmonics_hz": [
+      50.0,
+      100.0
+    ],
+    "signal_length": 13244,
+    "window_count": 105,
+    "short_signal": false,
+    "state_distribution": {
+      "inactive": 105
+    },
+    "avg_pole_radius": 0.9000000000000002,
+    "avg_ensemble_size": 6.0,
+    "avg_noise_coeff": 0.1,
+    "dominant_wavelet": "db4",
+    "avg_corr": 0.7918719951889073,
+    "avg_gsnr": 5.27230315641691,
+    "avg_nrmse": 0.11334246057119404,
+    "avg_cost": 2.6722838493774925,
+    "avg_alpha": 1.048155051097032,
+    "avg_r_opt": 0.789801472674291,
+    "normalization_mean": 4.796478750902857e-06,
+    "normalization_std": 0.00022937343273845816
+  },
+  "normal/V_Imp_default2.csv": {
+    "input_file": "normal/V_Imp_default2.csv",
+    "output_file": "normal/V_Imp_default2.csv",
+    "voltage_column": "电压",
+    "sample_count": 7581,
+    "processor_fs": 250.0,
+    "window_size": 250,
+    "overlap": 125,
+    "hop_size": 125,
+    "analog_highpass_hz": 0.1,
+    "analog_lowpass_hz": 100.0,
+    "adaptive_notch_harmonics_hz": [
+      50.0,
+      100.0
+    ],
+    "signal_length": 7581,
+    "window_count": 60,
+    "short_signal": false,
+    "state_distribution": {
+      "inactive": 58,
+      "active": 2
+    },
+    "avg_pole_radius": 0.9015000000000001,
+    "avg_ensemble_size": 6.083333333333333,
+    "avg_noise_coeff": 0.10346666666666664,
+    "dominant_wavelet": "db4",
+    "avg_corr": 0.8159215894227211,
+    "avg_gsnr": 13.726306692161494,
+    "avg_nrmse": 0.09375655321619279,
+    "avg_cost": 6.489143164259334,
+    "avg_alpha": 1.0320967840193909,
+    "avg_r_opt": 0.8135648954082527,
+    "normalization_mean": -5.448808069163131e-06,
+    "normalization_std": 0.003815207247234027
+  },
+  "touch/V_Imp_touch1.csv": {
+    "input_file": "touch/V_Imp_touch1.csv",
+    "output_file": "touch/V_Imp_touch1.csv",
+    "voltage_column": "电压",
+    "sample_count": 2675,
+    "processor_fs": 250.0,
+    "window_size": 250,
+    "overlap": 125,
+    "hop_size": 125,
+    "analog_highpass_hz": 0.1,
+    "analog_lowpass_hz": 100.0,
+    "adaptive_notch_harmonics_hz": [
+      50.0,
+      100.0
+    ],
+    "signal_length": 2675,
+    "window_count": 21,
+    "short_signal": false,
+    "state_distribution": {
+      "inactive": 16,
+      "abnormal": 5
+    },
+    "avg_pole_radius": 0.9214285714285714,
+    "avg_ensemble_size": 6.9523809523809526,
+    "avg_noise_coeff": 0.13571428571428573,
+    "dominant_wavelet": "db4",
+    "avg_corr": 0.7755857119897096,
+    "avg_gsnr": 7.30315348387677,
+    "avg_nrmse": 0.09945896803007943,
+    "avg_cost": 3.581734507335918,
+    "avg_alpha": 1.0336048377426543,
+    "avg_r_opt": 0.7737946107081937,
+    "normalization_mean": -2.2417616699025548e-05,
+    "normalization_std": 0.0014616371713613394
+  }
+}
